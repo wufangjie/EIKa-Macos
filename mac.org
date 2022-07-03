@@ -1,0 +1,483 @@
+* homebrew
+#+BEGIN_SRC sh
+  /bin/bash -c "$(curl -fsSL https://gitee.com/ineo6/homebrew-install/raw/master/install.sh)"
+
+  /bin/bash -c "$(curl -fsSL https://gitee.com/ineo6/homebrew-install/raw/master/uninstall.sh)" # 用 rosetta 装了两个的，也需要卸载两次，手动删除路径
+  # sudo rm -rf /opt/homebrew/
+  # sudo rm -rf /usr/local/
+
+  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/wufangjie/.zprofile
+
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+#+END_SRC
+
+
+#+begin_src sh
+  brew config # 当前源
+
+  git -C "$(brew --repo homebrew/cask)" remote -v
+
+  brew update
+#+end_src
+
+
+System Preferences > Keyboard > Input Sources
+	+	English > Australian
+
+* tricks
+** quit completely
+Dock 下面有一个小点，表示程序并没有真的结束，正确的方法是 command+Q
+
+** black desktop
+System Preferences > Desktop & Screen Saver > Apple > Colors > Black
+
+** 隐藏 docker
+System preferences > Docker & Menu Bar > Automatically hide and show the Docker
+
+** 禁用引号和短横的自动替换
+System Preferences > Keyboard > Text
+Use smart quotes and dashes (取消勾选，否则--会被替换成emdash)
+
+** finder 显示隐藏文件
+CMD + > (shift)
+
+** 禁用自动解压
+Safari > Preferences > General > uncheck Open "safe" file after Downloading
+
+** shortcuts modify
+| show launchpad | CMD + l |                |
+| show desktop   | CMD + d | Misson Control |
+
+** finder 显示路径
+Finder > View > Show Path Bar
+点击切换路径，拖动文件到祖先路径
+
+** 三指拖动 (其实也不好用, 还是用命令行吧)
+System Preferences > Accessibilty > Pointer Control > TrackPad Options
+
+check Enable dragging, select three finger drag
+
+** clear recents in Finder
+https://iboysoft.com/howto/clear-recents-on-mac.html
+
+System Preferences > Spotlight > Privarcy
+
+* v2rayu
+brew install --cask v2rayu
+
+** requirement (因为是m1，需要安装 rosetta)
+softwareupdate --install-rosetta
+
+** reinstall
+https://newspacex.top/link/YOxS3zaICzATXDTA?mu=2
+
+~/.V2rayU/
+~/Library/LaunchAgents/yanue.v2rayu.v2ray-core.plist
+~/Library/Preferences/net.yanue.V2rayU.plist
+
+
+* karabiner
+** 下载
+从 github 或官网下载，按照引导设置好权限(需要log out)，改空格两边的键和¥键
+
+** 修改
++ "international3" > "delete_or_backspace"
++ "japanese_eisuu" > "left_command"
++ "japanese_kana" > "right_control"
+
+
+* spotlight
+关掉 Spotlight 快捷键
+uncheck spotlight search result
+disable spotlight
+Privacy add Macintosh HD
+
+* 按"地球"切换输入法慢
+System Preferences > Keyboard > Shortcuts
+修改 Input Sources 快捷键 (用 previous 那个, 可以应对大于两个的情况)
+
+* 传文件
+air 没有 usb 口，传文件很不方便，临时的可以用qq，小文件还可以 web 微信
+
+* emacs
+据说27对m1支持不好，一开始按网上说的安装 emacs-plus@28，每次都是 git clone 卡很长时间然后失败，我已经用了 v2rayu 还是不行，最后还是在 emacs for mac os x 下载的pretest 版本的emacs28
+
+* locked
+emacs 会产生锁定的状态，通常是因为没有保存而退出 emacs 导致的，这种时候删除就行了
+在 dired-mode 用 d+x
+
+* python.el.gz
+** no C-c C-p
+search python-shell-send-region
+#+begin_src emacs-lisp
+         (process (or (python-shell-get-process)
+                      (let ((current-prefix-arg "-"))
+                        (call-interactively 'run-python))))
+         ;; (process (python-shell-get-process-or-error msg))
+#+end_src
+
+TODO: 第一次会报 __PYTHON_EL_eval 未定义的错误
+
+** disable read only prompt
+search comint-prompt-read-only
+set nil
+
+** encoding problem on windows
+
+** pre import packages
+from pprint import pprint
+
+** add keywords
+pprint, cls
+
+** remove variable face and add assignment face
+
+* pyenv 管理 python 环境
+
+.zprofile
+#+begin_src sh
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/shims:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+fi
+#+end_src
+
+#+begin_src sh
+source .zprofile
+#+end_src
+
+
+#+begin_src sh
+  brew install pyenv
+
+  pyenv -v # pyenv version
+  pyenv update # update pyenv
+  #brew upgrade pyenv
+
+  pyenv install --list
+
+  pyenv versions # python versions, * means current version
+  pyenv versions # current python version
+
+  pyenv install --list # list available python versions
+  pyenv install 3.10.2
+
+  PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv install 3.10.2
+  # https://stackoverflow.com/questions/59690698/modulenotfounderror-no-module-named-lzma-when-building-python-using-pyenv-on
+
+  CC=clang CXX=clang++ ARCHFLAGS="-arch x86_64"
+
+
+  pyenv uninstall 3.10.2 # remove
+
+  pyenv global system #
+
+  pyenv local 3.10.2 # set current dir's python version
+  pyenv local --unset
+
+  pyenv shell 3.10.2 # set current shell's python version
+#+end_src
+
+
+TODO: let eshell support shell
+
+
+** for eshell
+#+begin_src sh
+  setenv PYENV_VERSION 3.10.2
+  setenv PYENV_VERSION # unset
+  # pyenv shell 3.10.2 #
+
+#+end_src
+
+** local install
+#+begin_src sh
+mkdir .pyenv/cache
+v=3.7.12; curl -L https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -o ~/.pyenv/cache/Python-$v.tar.xz; pyenv install $v
+#+end_src
+
+
+* access Downloads/Documents
+https://apple.stackexchange.com/questions/371888/restore-access-to-file-system-for-emacs-on-macos-catalina
+
+
+#+begin_src sh
+/Applications/Emacs.app/Contents/MacOS/Emacs
+#+end_src
+
+* AppKit
+#+begin_src sh
+  pip3 install --upgrade pip
+  pip3 install AppKit # 主要是这个, 看缺什么包, 用 brew 装好后运行
+  pip3 install pycairo # 仍然装不上，用下面的方法装
+  brew install py3cairo
+  brew install pygobject3
+
+  # 都装完后, ModuleNotFoundError: No module named 'AppKit'
+  pip3 install -U PyObjC
+  # https://stackoverflow.com/questions/64555754/why-is-importing-appkit-not-working-when-appkit-is-installed-on-pip3
+#+end_src
+
+* emacs keybinding
+
+The only way it wouldn't work is if the application creator reimplemented those shortcuts from scratch, which is doubtful as it would be much easier to just use the versions that come free with a textfield
+
+Don’t edit the built-in /System/Library/ file, as this could seriously hose your machine. Note that as usual, personalized bindings override the built-in standards.
+
+
+application shortcut will override global custom shortcuts
+
+** karabiner (abandon)
++ "international3" > "delete_or_backspace"
++ "japanese_eisuu" > "left_command"
++ "japanese_kana" > "right_control"
+
+
+** hidutil
+karabiner element-viewer to see usage
+
+** DefaultKeyBinding.Dict
+
+** TODO 没有
+
+** 特殊快捷键
+右上角点击输入法图标
+
+** terminal
+DefaultKeyBinding.Dict 貌似不起作用，
+Preferences > Profiles > keyboard > Use Option as Meta key
+
+C-/ 撤销
+
+* PYTHON flycheck seems not work on macos
+* safe mode (清除高速缓存)
++ 关闭电源(shutdown)
++ 按住电源键，直到看到启动选项窗口
++ 选择启动盘
++ 按住 shift, 启动盘下的 continue 变成 safe mode, 点击
++ 释放 shift
+
+* F12 inspect
+Safari > Preferences > Advanced > Show Develop menu in menu bar
+
+* automator
+https://stackoverflow.com/questions/5125907/how-to-run-a-shell-script-in-os-x-by-double-clicking
+
+1. Open Automator application
+2. Choose "Application" type
+3. Type "run" in the Actions search box
+4. Double click "Run Shell Script"
+5. Click the Run button in upper right corner to test it.
+6. File > Save to create the Application.
+
+#+begin_src sh
+/Applications/Emacs.app/Contents/MacOS/Emacs &>/dev/null &
+#+end_src
+
+* 回收站还原
+暂时发现只能拖动，而且不太好拖
+
+* add home to Finder's Favorites
+open Finder
+search the target directory
+drag to Favorites
+
+* Usb flash driver path
+/Volumes
+
+* python universal
+如何判断 python 是 arm64, x86_64 还是 universal
+#+begin_src sh
+python3 -c "import platform; print(platform.platform())"
+#+end_src
++ macOS-12.3-arm64-i386-64bit # universal
++ macOS-12.3-arm64-arm-64bit  # arm64
+
+homebrew 默认安装的是 unversal, pyenv 默认是 arm64 (至少 2.2.4 如此)
+#+begin_src sh
+pyenv install 3.10.2 --with-universal-archs
+#+end_src
+
+
+
+
+v=3.10.2; curl -L https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -o ~/.pyenv/cache/Python-$v.tar.xz; env PYTHON_CONFIGURE_OPTS="--enable-shared --enable-universalsdk=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk --with-universal-archs=universal2" pyenv install $v
+
+
+pyenv install $v
+
+#+begin_src sh
+
+ln -s /opt/homebrew/Cellar/python@3.10/3.10.2/Frameworks/Python.framework/Versions/3.10/bin/python3.10 /opt/homebrew/bin/python3
+ln -s /opt/homebrew/Cellar/python@3.10/3.10.2/bin/pip3 /opt/homebrew/bin/pip3
+#+end_src
+* 环境搭建
+#+begin_src sh
+pip3 install python
+#+end_src
+
+If you need to have python@3.10 first in your PATH, run:
+  echo 'export PATH="/opt/homebrew/opt/python@3.10/bin:$PATH"' >> ~/.zshrc
+
+For compilers to find python@3.10 you may need to set:
+  export LDFLAGS="-L/opt/homebrew/opt/python@3.10/lib"
+
+* console print tricks
+
+可以回到上一行
+https://blog.csdn.net/weixin_30376509/article/details/99994590
+\n
+\b
+\033[1A # 返回上一行
+\033[K # 清除本行
+
+
+precision TP / TP + FP
+precision TP / TP + FN
+
+
+* emacs
+/Applications/Emacs.app/Contents/MacOS/Emacs
+/Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+
+
+* 中文输入法，按四声选词
+有时候是是打错了，需要英文 tab 补全，这个时候不要按回车（字母会带四声），而是 C-g (可能我改过映射，反正是 abort)
+
+* hotkey
+#+begin_src sh
+pip3 install pyobjc-core # we can import AppKit now
+pip3 install pyobjc-framework-Cocoa
+pip3 install pyobjc-framework-Quartz
+#+end_src
+* terminal 字体改成 14
+
+* osascript
+
+** 打印所有应用名称
+#+begin_src sh
+osascript -e 'tell application "System Events" to get name of (processes where background only is false)'
+#+end_src
+
+** terminal 最小化
+#+begin_src sh
+osascript -e 'tell application "Terminal" to set miniaturized of every window to true'
+#+end_src
+
+** alt+tab
+#+begin_src sh
+osascript -e 'tell application "System Events" to key code 48 using {command down}'
+#+end_src
+
+** 隐藏，等效于 在 alt+tab 时按 h
+#+begin_src sh
+osascript -e 'tell application "System Events" to set visible of application process "Python" to false'
+#+end_src
+
+** frontmost
+
+#+end_src
+
+* org-mode 高亮
+package-install htmlize
+
+* system preferences -> mission control -> hot corners -> to disable right-bottom notes
+* system preferences -> keyboard -> app shortcuts
+add Move focus to active or next window
+
+* kuma
+pip3.9 install imageio
+
+python3.9 -m nuitka --standalone --macos-app-icon=/Users/wufangjie/kuma/icon/kuma\(256x256\).ico --macos-create-app-bundle --macos-app-name=Kuma --enable-plugin=pyqt5 Kuma.py
+
+-o kuma.app
+
+Nuitka:WARNING: Using very slow fallback for ordered sets, please install
+Nuitka:WARNING: 'ordered-set' or 'orderedset' PyPI packages for best Python
+Nuitka:WARNING: compile time performance.
+
+Nuitka-Plugins:WARNING: Use '--enable-plugin=pyqt5' for: Inclusion of Qt
+Nuitka-Plugins:WARNING: plugins.
+
+Nuitka-Scons:WARNING: You are not using ccache.
+
+* shortcuts
+| 锁屏      | CMD+CTRL+Q |
+| launchpad | CMD+CTRL+L |
+
+* python api (system shortcut)
+see kuma for more informations
+
+install dependencies
+#+begin_src sh
+pip3 install pyobjc-framework-Cocoa
+pip3 install pyobjc-framework-Quartz
+#+end_src
+
+#+begin_src python
+# https://gist.github.com/cosven/75523f1e970edcc4da8cf1908a9c1463
+
+import logging
+import os
+import sys
+
+
+s_handler = logging.StreamHandler(sys.stdout)
+s_handler.setFormatter(logging.Formatter(
+    "[%(asctime)s] [%(levelname)-5.5s] [%(filename)s:%(lineno)s] %(message)s"))
+logger = logging.getLogger(__name__)
+logger.addHandler(s_handler)
+logger.setLevel(logging.INFO)
+
+
+from AppKit import NSKeyUp, NSEvent, NSBundle, NSSystemDefined
+import Quartz
+
+
+CTRL = 0x40001
+KUMA_MOD = CTRL
+KUMA_KEY = 41
+
+
+def keyboard_tap_callback(proxy, type_, event, refcon):
+    key_event = NSEvent.eventWithCGEvent_(event)
+    if key_event is not None:
+        print(key_event) # press keys to see flags and keyCode
+        # breakpoint() # for debug
+        if key_event.modifierFlags() & KUMA_MOD == KUMA_MOD:
+            if key_event.keyCode() == KUMA_KEY:
+                print("I catched kuma")
+    return event
+
+def run_event_loop():
+    logger.info("try to load mac hotkey event loop")
+
+    # Set up a tap, with type of tap, location, options and event mask
+    tap = Quartz.CGEventTapCreate(
+        Quartz.kCGSessionEventTap,  # Session level is enough for our needs
+        Quartz.kCGHeadInsertEventTap,  # Insert wherever, we do not filter
+        Quartz.kCGEventTapOptionDefault,
+        # Quartz.CGEventMaskBit(NSSystemDefined), # for media keys
+        Quartz.CGEventMaskBit(Quartz.kCGEventKeyUp),
+        keyboard_tap_callback,
+        None
+    )
+
+    run_loop_source = Quartz.CFMachPortCreateRunLoopSource(None, tap, 0)
+    Quartz.CFRunLoopAddSource(
+        Quartz.CFRunLoopGetCurrent(),
+        run_loop_source,
+        Quartz.kCFRunLoopDefaultMode
+    )
+    # Enable the tap
+    Quartz.CGEventTapEnable(tap, True)
+    # and run! This won't return until we exit or are terminated.
+    Quartz.CFRunLoopRun()
+    logger.error('Mac hotkey event loop exit')
+
+
+if __name__ == '__main__':
+    run_event_loop()
+
+#+end_src
