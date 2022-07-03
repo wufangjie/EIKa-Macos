@@ -1,0 +1,5 @@
+* no option
+去除了 alt 加音标的 layout，我用的 emacs keybinding，购买了日式键盘短空格，好利用边上的两个键，这样的 macos 自带的输入法，除了某些特定国家都会变成日式，所以动手自己整了一个
+
+* mac.org
+仅备份，未整理过的笔记
