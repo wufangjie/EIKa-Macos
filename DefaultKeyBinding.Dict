@@ -1,0 +1,43 @@
+{
+/* Keybindings for emacs emulation. redo: paste: save: cut: copy: saveAs: */
+
+
+    /* Ctrl shortcuts */
+
+
+
+
+
+    "^l"        = "centerSelectionInVisibleArea:";  /* C-l          Recenter */
+    "^/"        = "undo:";                          /* C-/          Undo */
+    "^ "        = "setMark:";                       /* C-Spc        Set mark */
+    "^w"        = "cut:";                           /* C-w          deleteToMark: */
+    "^g"        = "cancelOperation:";               /* C-g          abort: TODO: did not work */
+    "^y"        = "paste:";                         /* C-y          yank: */
+    "^v"        = "pageDown:";                      /* C-v          Page Down */
+
+
+    /* Meta shortcuts */
+    "~f"        = "moveWordForward:";               /* M-f          Move forward word */
+    "~b"        = "moveWordBackward:";              /* M-b          Move backward word */
+
+    "~d"        = "deleteWordForward:";             /* M-d          Delete forward word */
+    "~\U007F"   = "deleteWordBackward:";            /* M-Bksp       Delete backward word */
+
+    "~w"        = "copy:";                          /* M-w          Copy */
+
+    "~<"        = "moveToBeginningOfDocument:";     /* M-<          Move to beginning of document */
+    "~>"        = "moveToEndOfDocument:";           /* M->          Move to end of document */
+    "~v"        = "pageUp:";                        /* M-v          Page Up */
+    "~t"        = "transposeWords:";                /* M-t          Transpose words */
+
+
+    "~u"        = (uppercaseWord:, moveForward:, moveForward:);
+    "~c"        = (uppercaseWord:, moveForward:, moveForward:);
+    "~l"        = (lowercaseWord:, moveForward:, moveForward:);
+    "~h"        = "selectParagraph:";                     /* M-h          Mark paragraph */
+
+
+
+
+}
